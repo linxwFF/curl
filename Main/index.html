@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+ <html lang="en">
+   <head>
+     <meta charset="utf-8">
+     <meta name="description" content="">
+     <meta name="keywords" content="">
+     <meta name="author" content="">
+     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+     <meta name="viewport" content="width=device-width, initial-scale=1">
+     <title>采集程序</title>
+     <style>
+     .mb_30{ margin-bottom:30px; }
+     .mb_15{ margin-bottom:15px; }
+     .mt_10{ margin-top:10px; }
+     .mt_15{ margin-top:15px; }
+
+     .single_item{border-bottom: 1px dotted #333;}
+     </style>
+     <!-- Latest compiled and minified CSS -->
+     <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
+
+   </head>
+   <body>
+    <div class="col-md-11 col-md-offset-1 text-left"><h3>采集程序</h3></div>
+
+    <div class="container mb_15">
+        <div class="col-md-12">
+            <ul class="nav nav-pills" role="tablist">
+              <li role="presentation" class="active"><a href="#">www.kjksxt.com</a></li>
+              <li role="presentation"><a href="#">Profile</a></li>
+              <li role="presentation"><a href="#">Messages</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="container mb_15">
+        <div class="col-md-12">
+            <div class="input-group">
+                <button class="btn btn-primary" value="Zjxz?lid=1" onclick="selectCourse(this.value)">财经法规与会计职业道德</button>&nbsp;
+                <button class="btn btn-primary" value="Zjxz?lid=2" onclick="selectCourse(this.value)">会计电算化</button>&nbsp;
+                <button class="btn btn-primary" value="Zjxz?lid=3" onclick="selectCourse(this.value)">会计基础</button>&nbsp;
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container mb_15">
+        <div class="col-md-3">
+            <button class="btn btn-success">全部开始</button>&nbsp;&nbsp;
+            <button class="btn btn-warning">全部暂停</button>&nbsp;&nbsp;
+            <span class="label label-info" >总进度：</span>
+        </div>
+
+        <div class="col-md-9">
+            <div class="progress" style="margin-top:7px">
+                <div class="progress-bar" role="progressbar" aria-valuenow="2" aria-valuemin="0" aria-valuemax="100" style="width: 2%;">
+                  2%
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12">2/100</div>
+    </div>
+
+    <div class="progress" id="requst_pro_div" style="margin-top:7px;height: 3px;">
+        <div class="progress-bar" role="progressbar" id="requst_pro" aria-valuenow="2" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+
+    <div class="container" id="resultDiv">
+        <!-- 抓取目录 -->
+    </div>
+
+     <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+     <script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+     <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+     <script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+     <script src="js/main.js"></script>
+   </body>
+ </html>
