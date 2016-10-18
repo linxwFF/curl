@@ -8,7 +8,8 @@ $(document).ready(function() {
     function init()
     {
         //重置
-        $("#resultDiv").html();
+        $("#resultDiv").empty();
+        console.log("清空");
         $('#requst_pro').css("width", "0%");
     }
 
@@ -42,30 +43,47 @@ $(document).ready(function() {
 
                 var course = '';
 
-                course += '        <div class="col-md-3 mt_15">';
+                course += '        <div class="col-md-2 mt_15">';
                 course += '            <button class="btn btn-success" onclick="start(this.value,'+ i +');" value="'+data.data[i].url+'" >开始</button>&nbsp;&nbsp;';
                 course += '            <button class="btn btn-warning">暂停</button>&nbsp;&nbsp;';
+
+                course += '        </div>';
+                course += '        <div class="col-md-10 mt_15">';
+
+                course += '        <div class="col-md-12">';
+                course += '        <div class="col-md-2">';
+                course += '            <span class="label label-info" >获取数据进度：</span>';
+                course += '        </div>';
+                course += '        <div class="col-md-10">';
+                course += '             <div class="progress" id="requst_pro_div_'+i+'" style="margin-top:7px;height: 3px;">';
+                course += '                <div class="progress-bar" role="progressbar" id="requst_pro_'+i+'" aria-valuenow="2" aria-valuemin="0" aria-valuemax="100"></div>';
+                course += '             </div>';
+                course += '        </div>';
+                course += '        </div>';
+
+                course += '        <div class="col-md-12">';
+                course += '        <div class="col-md-2">';
                 course += '            <span class="label label-default" >数据入库进度：</span>';
                 course += '        </div>';
-                course += '        <div class="col-md-9 mt_15">';
+                course += '        <div class="col-md-10">';
                 course += '            <div class="progress" style="margin-top:7px">';
                 course += '              <div class="progress-bar" role="progressbar" id="progress_'+i+'" aria-valuenow="2" aria-valuemin="0" aria-valuemax="100">';
-                course += '                2%';
+                course += '                0%';
                 course += '              </div>';
                 course += '            </div>';
                 course += '        </div>';
-                course += '        <div class="col-md-4">';
+                course += '        </div>';
+
+                course += '        </div>';
+
+                course += '<div class="col-md-12 single_item ">';
+                course += '        <div class="col-md-4 mb_15">';
                 course += '        <td align="left" height="35" style="padding-left: 20px;"">&nbsp;&nbsp;' + data.data[i].jname + '</td>';
                 course += '        </div>';
-                course += '        <div class="col-md-4"><span id="count_'+i+'" style="color:red">0</span>/<span id="sum_'+i+'">0</span></div>';
-                course += '        <div class="col-md-4"><span id="countFail_'+i+'" style="color:red">0</span>/<span id="countSuccess_'+i+'">0</span></div>';
+                course += '        <div class="col-md-4 mb_15"><span id="count_'+i+'" style="color:red">0</span>/<span id="sum_'+i+'">0</span></div>';
+                course += '        <div class="col-md-4 mb_15"><span id="countFail_'+i+'" style="color:red">0</span>/<span id="countSuccess_'+i+'">0</span></div>';
+                course += '</div>';
 
-                course += '<div class="col-md-12 single_item">';
-                course += '<span class="label label-info" >获取数据进度：</span>';
-                course += '<div class="progress" id="requst_pro_div_'+i+'" style="margin-top:7px;height: 3px;">';
-                course += '    <div class="progress-bar" role="progressbar" id="requst_pro_'+i+'" aria-valuenow="2" aria-valuemin="0" aria-valuemax="100"></div>';
-                course += '</div>';
-                course += '</div>';
                      $("#resultDiv").append(course);
                     }
              }
@@ -81,7 +99,7 @@ $(document).ready(function() {
             url: 'curl_course.php',
             type:'post',
             data:{
-                url : 'http://www.kjksxt.com/Main/' + url
+                url : 'http://www.kjksxt.com' + url
             },
             async : true, //默认为true 异步
             error:function(){
@@ -103,7 +121,7 @@ $(document).ready(function() {
                         type:'post',
                         data:{
                             data : data.data[j],
-                            count : (j-1)
+                            count : j
                         },
                         async : false, //默认为true 异步
                         error:function(){
@@ -114,7 +132,8 @@ $(document).ready(function() {
                             var data = JSON.parse(data);
 
                             //进度条
-                            var count = data.data.count;
+                            var count = data.count;
+                            console.log(count);
                             var per = ((j/sum)*100).toFixed(2);
                             $('#progress_'+ i).css("width", per + "%");
                             $('#progress_'+ i).html(per + "%");

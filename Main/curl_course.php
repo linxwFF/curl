@@ -14,8 +14,8 @@ $post_fields="xttype=1&zhm=fjsy0003&mima=123456";
 $cookie_file = initLogin($cookie_file, $login_url, $post_fields);
 
 //登录成功后，获取
-// $url=$_POST['url'];
-$url="http://www.kjksxt.com/Main/ZjJiexi?lid=1&jid=41&zname=%E7%AC%AC%E4%B8%80%E7%AB%A0%20%E4%BC%9A%E8%AE%A1%E6%B3%95%E5%BE%8B%E5%88%B6%E5%BA%A6&jname=%E7%AC%AC%E4%B8%80%E8%8A%82%20%E4%BC%9A%E8%AE%A1%E6%B3%95%E5%BE%8B%E5%88%B6%E5%BA%A6%E7%9A%84%E6%A6%82%E5%BF%B5%E4%B8%8E%E6%9E%84%E6%88%90";
+$url=$_POST['url'];
+// $url="http://www.kjksxt.com/main/zjjiexi?lid=1&jid=41&zname=%E7%AC%AC%E4%B8%80%E7%AB%A0%20%E4%BC%9A%E8%AE%A1%E6%B3%95%E5%BE%8B%E5%88%B6%E5%BA%A6&jname=%E7%AC%AC%E4%B8%80%E8%8A%82%20%E4%BC%9A%E8%AE%A1%E6%B3%95%E5%BE%8B%E5%88%B6%E5%BA%A6%E7%9A%84%E6%A6%82%E5%BF%B5%E4%B8%8E%E6%9E%84%E6%88%90";
 $ch=curl_init($url);
 curl_setopt($ch,CURLOPT_HEADER,0);
 curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
@@ -26,27 +26,18 @@ curl_close($ch);
 
 //科目id  科目名   章id  节id  章名  节名
 $query = explode("&",parse_url($url)['query']);
-print_r($query);
 foreach ($query as $key => $value) {
     if($key == 0){
-        $course_id = str_replace("lid=", " ", $value);
+        $course_id = str_replace("lid=", " ", $value);  //科目ID
     }elseif($key == 1){
-        $j_id = str_replace("jid=", " ", $value);
-        $z_id = $j_id;
+        $j_id = str_replace("jid=", " ", $value);       //章id
+        $z_id = $j_id;                                  //节id
     }elseif($key == 2){
-        $z_name = str_replace("zname=", " ", $value);
+        $z_name = urldecode(str_replace("zname=", " ", $value));   //章名
     }elseif($key == 3){
-        $j_name = str_replace("jname=", " ", $value);
+        $j_name = urldecode(str_replace("jname=", " ", $value));   //节名
     }
 }
-
-print_r($course_id);
-print_r($z_id);
-print_r($j_id);
-print_r(urldecode($z_name));
-print_r(urldecode($j_name));
-
-die();
 
 //匹配题型
 $reg = "%bgcolor='#FFFFFF'>(.*?)</td>%si";
@@ -104,9 +95,9 @@ foreach ($options as $key => $value) {
     }
     $data['options'][] =  $temp;
     unset($temp);
-
 }
-// print_r($options);
+// print_r($data['options']);
+
 //答案
 $reg = "%【标准答案】(.*?)</li>%si";
 preg_match_all($reg, $result, $match);
@@ -123,25 +114,30 @@ foreach ($explain as $key => $value) {
     $data['explain'][] = str_replace('：', '',strip_tags($value));
 }
 // print_r($explain);
-
 //最后组成数据记录块
+
 $result = [];
 for ($i=1;$i<=count($data['topic']);$i++) {
 
     $result[$i] = [
-        'subject' => $data['topic'][$i-1]['topic_value'],
-        'type' => $data['topic'][$i-1]['topic_type'],
-        'score' => $data['topic'][$i-1]['score'],
-        'options' => isset($data['options'][$i-1])?$data['options'][$i-1]:'',
-        'choose_right' => $data['right'][$i-1],
-        'analysis' => $data['explain'][$i-1],
+        //题库表
+        'subject'         => $data['topic'][$i-1]['topic_value'],
+        'type'            => $data['topic'][$i-1]['topic_type'],
+        'score'           => $data['topic'][$i-1]['score'],
+        'options'         => isset($data['options'][$i-1])?$data['options'][$i-1]:'',
+        'choose_right'    => $data['right'][$i-1],
+        'analysis'        => $data['explain'][$i-1],
+        //科目章节目录表
+        'course_type'       => $course_id,
+        'z_id'            => $z_id,
+        'j_id'            => $j_id,
+        'z_name'          => $z_name,
+        'j_name'          => $j_name,
     ];
 
 }
 
-
-// print_r($result);
-
+//结果JSON格式输出
 echo json_encode(['data' => $result, 'sum' => $questions_type_sum]);
 
 ?>
