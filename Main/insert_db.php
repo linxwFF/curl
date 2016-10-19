@@ -10,83 +10,64 @@ require_once 'libs/function_db.class.php';
 
 $data = $_POST['data'];
 $count = (int)$_POST['count'];
+$countRepeat = (int)$_POST['countRepeat'];
+$countFail = (int)$_POST['countFail'];
 
 //插入ID
 $lastID = getLastId($conn);
-//查重
-$rowcount = selectRepeat($conn,$data['subject']);
-//当前时间
-$date = (string)date("Y-m-d h:i:s",time());
+
 
 //数据  --测试
 // print_r($data);
 // print_r($lastID);
 // print_r($date);
-// print_r($rowcount);
 
-if(is_array($data['options'])){
-    $str_option = "    '{$data['options'][1]}',
-        '{$data['options'][2]}',
-        '{$data['options'][3]}',
-        '{$data['options'][4]}',";
-}else {
-    $str_option = "    '','','','',";
-}
-
-if($data && $rowcount == 0){
-    //题目表
-    $sql = "insert into questions (
-            course_type,
-            z_id,
-            j_id,
-            subject,
-            score,
-            choose_A,
-            choose_B,
-            choose_C,
-            choose_D,
-            choose_E,
-            choose_F,
-            choose_G,
-            choose_right,
-            analysis,
-            type,
-            created_at,
-            updated_at
-     )
-     VALUES (
-            '{$data['course_type']}',
-            '{$data['z_id']}',
-            '{$data['j_id']}',
-            '{$data['subject']}',
-            '{$data['score']}',
-            ".$str_option."
-            '',
-            '',
-            '',
-            '{$data['choose_right']}',
-            '{$data['analysis']}',
-            '{$data['type']}',
-            '{$date}',
-            '{$date}'
-     )";
-
-    if ($result=mysqli_query($conn,$sql))
+if ($data) {
+    //查重
+    if(selectRepeat_qustion($conn,$data['subject']))
     {
-        $count++;
+        //插入数据题目表
+        if ($result=insertDb_questions($conn,$data))
+        {
+            $count++;
+            $message = "插入成功";
+        }else {
+            $message = "插入数据失败";
+            $countFail++;
+        }
+    }else{
+        $message = "插入的数据重复";
+        $countRepeat++;
     }
 
-}else if($rowcount == 1){
-    $sql = "插入的数据重复";
-}else{
-    $sql = "错误，没有获取数据";
+
+    //插入数据章节表
+    if (selectRepeat_chapter($conn,$data['z_name'],$data['j_name']))
+    {
+        //插入数据题目表
+        if ($result=insertDb_chapter($conn,$data))
+        {
+            // $count++;
+            // $message = "插入成功";
+        }else {
+            $message = "插入数据失败";
+            $countFail++;
+        }
+    }else {
+        // $message = "插入的数据重复";
+        // $countFail++;
+    }
+
+}else {
+    $message = "错误，没有获取数据";
+    $countFail++;
 }
+
 
 // $result['count']  = $count;
 // $result['lastID'] = $lastID;
 // $result['sql']    = $sql;
 
-
-echo json_encode(['count' => $count, 'lastID' => $lastID, 'sql' => $sql]);
+echo json_encode(['count' => $count, 'countRepeat' => $countRepeat, 'countFail' =>$countFail, 'lastID' => $lastID, 'message' => $message]);
 
 ?>
